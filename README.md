@@ -1,0 +1,2 @@
+# khomotjo
+liphahlo tse ntle
