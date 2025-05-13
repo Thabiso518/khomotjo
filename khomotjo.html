@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KHOMOTJO SHOP - Clothing & Apparel</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            overflow-x: hidden;
+            position: relative;
+        }
+        .bg-circles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .bg-circles li {
+            position: absolute;
+            display: block;
+            list-style: none;
+            width: 20px;
+            height: 20px;
+            background: rgba(37, 211, 102, 0.2);
+            animation: animate 25s linear infinite;
+            bottom: -150px;
+            border-radius: 50%;
+        }
+        @keyframes animate {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+                border-radius: 0;
+            }
+            100% {
+                transform: translateY(-1000px) rotate(720deg);
+                opacity: 0;
+                border-radius: 50%;
+            }
+        }
+        .container {
+            max-width: 100%;
+            padding: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        .header {
+            background-color: #25D366;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+        .header p {
+            margin: 5px 0 0;
+            font-style: italic;
+        }
+        .view-toggle {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .view-toggle button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #075E54;
+            color: white;
+            cursor: pointer;
+            margin: 0 5px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .view-toggle button.active {
+            background-color: #128C7E;
+        }
+        .login-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            max-width: 400px;
+            margin: 0 auto 20px;
+        }
+        .login-section input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .login-section button {
+            width: 100%;
+            padding: 10px;
+            background-color: #25D366;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .admin-section, .customer-section {
+            display: none;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .admin-section.active, .customer-section.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .add-product-btn {
+            background-color: #25D366;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .product-list {
+            margin-top: 20px;
+        }
+        .product-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .product-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+            animation: shine 3s infinite linear;
+            z-index: 0;
+        }
+        @keyframes shine {
+            0% { transform: rotate(0deg) translate(-50%, -50%); }
+            100% { transform: rotate(360deg) translate(-50%, -50%); }
+        }
+        .product-info {
+            position: relative;
+            z-index: 1;
+            flex-grow: 1;
+        }
+        .product-info h3 {
+            margin: 0 0 5px 0;
+        }
+        .product-info p {
+            margin: 5px 0;
+            color: #555;
+        }
+        .product-actions {
+            position: relative;
+            z-index: 1;
+        }
+        .product-actions button {
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        .category-filter {
+            margin-bottom: 20px;
+        }
+        .category-filter select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 300px;
+        }
+        .customer-products {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .customer-product {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: white;
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .customer-product::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+            animation: sparkle 2s infinite alternate;
+            z-index: 0;
+        }
+        @keyframes sparkle {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        .customer-product:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .customer-product .product-content {
+            position: relative;
+            z-index: 1;
+        }
+        .customer-product h3 {
+            margin: 0 0 10px 0;
+            color: #075E54;
+        }
+        .customer-product p {
+            margin: 5px 0;
+        }
+        .price {
+            font-weight: bold;
+            color: #25D366;
+            font-size: 1.2em;
+        }
+        .stock {
+            color: #128C7E;
+        }
+        .out-of-stock {
+            color: #ff4444;
+        }
+        .admin-logs {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        .hidden {
+            display: none;
+        }
+        .shop-location {
+            background-color: #075E54;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .product-image {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .image-preview {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+        .image-upload {
+            margin-top: 10px;
+        }
+        .bling-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .bling {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
+            animation: blingMove 4s linear infinite;
+        }
+        @keyframes blingMove {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(50px);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-circles" id="bg-circles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>KHOMOTJO SHOP</h1>
+            <p>Quality Clothing & Apparel - Maseru</p>
+        </div>
+
+        <div class="view-toggle">
+            <button id="customer-view-btn" class="active">View Products</button>
+            <button id="admin-view-btn">Shop Owner</button>
+        </div>
+
+        <div id="login-section" class="login-section hidden">
+            <h2>Enter Password</h2>
+            <input type="password" id="admin-password" placeholder="Shop owner password">
+            <button id="login-btn">Login</button>
+            <p id="login-error" style="color: red; display: none;">Incorrect password!</p>
+        </div>
+
+        <div id="customer-section" class="customer-section active">
+            <h2>Available Products</h2>
+            <div class="category-filter">
+                <select id="customer-category-filter">
+                    <option value="all">All Categories</option>
+                </select>
+            </div>
+            <div class="customer-products" id="customer-products-container">
+                <!-- Products will be displayed here -->
+            </div>
+            
+            <div class="shop-location">
+                <p>We are located in Maseru, Ha Thamae. Open Monday-Saturday from 8am to 5pm.</p>
+            </div>
+        </div>
+
+        <div id="admin-section" class="admin-section">
+            <h2>Shop Management</h2>
+            
+            <div class="form-group">
+                <label for="product-name">Product Name</label>
+                <input type="text" id="product-name" placeholder="Product name">
+            </div>
+            
+            <div class="form-group">
+                <label for="product-category">Category</label>
+                <input type="text" id="product-category" placeholder="Product category">
+            </div>
+            
+            <div class="form-group">
+                <label for="product-price">Price (M)</label>
+                <input type="number" id="product-price" placeholder="Price in Maloti">
+            </div>
+            
+            <div class="form-group">
+                <label for="product-stock">Stock Quantity</label>
+                <input type="number" id="product-stock" placeholder="Available quantity">
+            </div>
+            
+            <div class="form-group">
+                <label for="product-description">Description</label>
+                <textarea id="product-description" placeholder="Short description (optional)" rows="3"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="product-image">Product Image</label>
+                <input type="file" id="product-image" class="image-upload" accept="image/*">
+                <img id="image-preview" class="image-preview" src="#" alt="Image Preview">
+            </div>
+            
+            <button class="add-product-btn" id="add-product-btn">Add Product</button>
+            
+            <div class="product-list" id="admin-product-list">
+                <!-- Products will be displayed here -->
+            </div>
+            
+            <div class="admin-logs">
+                <h3>Activity Log</h3>
+                <div id="admin-logs-container">
+                    <!-- Logs will be displayed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data storage
+        let products = JSON.parse(localStorage.getItem('khomotjo_products')) || [];
+        let categories = JSON.parse(localStorage.getItem('khomotjo_categories')) || ['T-Shirts', 'Jeans', 'Shoes', 'Dresses', 'Jackets'];
+        let logs = JSON.parse(localStorage.getItem('khomotjo_logs')) || [];
+        
+        // Add some sample products if none exist
+        if (products.length === 0) {
+            products = [
+                {
+                    id: 1,
+                    name: "Basotho T-Shirt",
+                    category: "T-Shirts",
+                    price: 120,
+                    stock: 15,
+                    description: "Traditional Basotho design T-Shirt",
+                    dateAdded: new Date().toLocaleString(),
+                    image: null
+                },
+                {
+                    id: 2,
+                    name: "Men's Jeans",
+                    category: "Jeans",
+                    price: 250,
+                    stock: 8,
+                    description: "Durable men's jeans",
+                    dateAdded: new Date().toLocaleString(),
+                    image: null
+                },
+                {
+                    id: 3,
+                    name: "Seshoeshoe Dress",
+                    category: "Dresses",
+                    price: 350,
+                    stock: 5,
+                    description: "Beautiful traditional Seshoeshoe dress",
+                    dateAdded: new Date().toLocaleString(),
+                    image: null
+                }
+            ];
+            saveProducts();
+        }
+        
+        // DOM elements
+        const customerViewBtn = document.getElementById('customer-view-btn');
+        const adminViewBtn = document.getElementById('admin-view-btn');
+        const loginSection = document.getElementById('login-section');
+        const customerSection = document.getElementById('customer-section');
+        const adminSection = document.getElementById('admin-section');
+        const adminPasswordInput = document.getElementById('admin-password');
+        const loginBtn = document.getElementById('login-btn');
+        const loginError = document.getElementById('login-error');
+        
+        const productNameInput = document.getElementById('product-name');
+        const productCategoryInput = document.getElementById('product-category');
+        const productPriceInput = document.getElementById('product-price');
+        const productStockInput = document.getElementById('product-stock');
+        const productDescriptionInput = document.getElementById('product-description');
+        const productImageInput = document.getElementById('product-image');
+        const imagePreview = document.getElementById('image-preview');
+        const addProductBtn = document.getElementById('add-product-btn');
+        const adminProductList = document.getElementById('admin-product-list');
+        
+        const customerProductsContainer = document.getElementById('customer-products-container');
+        const customerCategoryFilter = document.getElementById('customer-category-filter');
+        const adminLogsContainer = document.getElementById('admin-logs-container');
+        const bgCirclesContainer = document.getElementById('bg-circles');
+        
+        // Admin password
+        const ADMIN_PASSWORD = "373049";
+        let isAdminLoggedIn = false;
+        
+        // Create background circles
+        function createBackgroundCircles() {
+            for (let i = 0; i < 100; i++) {
+                const circle = document.createElement('li');
+                circle.style.left = Math.random() * 100 + 'vw';
+                circle.style.width = Math.random() * 20 + 10 + 'px';
+                circle.style.height = circle.style.width;
+                circle.style.animationDuration = Math.random() * 20 + 10 + 's';
+                circle.style.animationDelay = Math.random() * 5 + 's';
+                circle.style.backgroundColor = `rgba(${Math.floor(Math.random() * 56)}, ${Math.floor(Math.random() * 211)}, ${Math.floor(Math.random() * 102)}, ${Math.random() * 0.3 + 0.1})`;
+                bgCirclesContainer.appendChild(circle);
+            }
+        }
+        
+        // Create bling effect for product cards
+        function createBlingEffect(container) {
+            for (let i = 0; i < 10; i++) {
+                const bling = document.createElement('div');
+                bling.className = 'bling';
+                bling.style.left = Math.random() * 100 + '%';
+                bling.style.top = Math.random() * 100 + '%';
+                bling.style.width = Math.random() * 10 + 5 + 'px';
+                bling.style.height = bling.style.width;
+                bling.style.animationDelay = Math.random() * 3 + 's';
+                bling.style.backgroundColor = `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.random() * 0.5 + 0.3})`;
+                container.appendChild(bling);
+            }
+        }
+        
+        // Initialize the app
+        function init() {
+            createBackgroundCircles();
+            updateCustomerView();
+            updateAdminView();
+            updateCategoriesDropdown();
+            updateLogsView();
+            
+            // Set up event listeners
+            customerViewBtn.addEventListener('click', () => {
+                customerViewBtn.classList.add('active');
+                adminViewBtn.classList.remove('active');
+                customerSection.classList.add('active');
+                adminSection.classList.remove('active');
+                loginSection.classList.add('hidden');
+            });
+            
+            adminViewBtn.addEventListener('click', () => {
+                if (isAdminLoggedIn) {
+                    customerViewBtn.classList.remove('active');
+                    adminViewBtn.classList.add('active');
+                    customerSection.classList.remove('active');
+                    adminSection.classList.add('active');
+                    loginSection.classList.add('hidden');
+                } else {
+                    loginSection.classList.remove('hidden');
+                    customerSection.classList.remove('active');
+                    adminSection.classList.remove('active');
+                }
+            });
+            
+            loginBtn.addEventListener('click', () => {
+                const password = adminPasswordInput.value;
+                if (password === ADMIN_PASSWORD) {
+                    isAdminLoggedIn = true;
+                    loginError.style.display = 'none';
+                    loginSection.classList.add('hidden');
+                    adminViewBtn.click();
+                } else {
+                    loginError.style.display = 'block';
+                }
+                adminPasswordInput.value = '';
+            });
+            
+            addProductBtn.addEventListener('click', addProduct);
+            
+            customerCategoryFilter.addEventListener('change', updateCustomerView);
+            
+            // Image preview handler
+            productImageInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+        
+        // Add a new product
+        function addProduct() {
+            const name = productNameInput.value.trim();
+            const category = productCategoryInput.value.trim();
+            const price = parseFloat(productPriceInput.value);
+            const stock = parseInt(productStockInput.value);
+            const description = productDescriptionInput.value.trim();
+            const imageFile = productImageInput.files[0];
+            
+            if (!name || !category || isNaN(price) || isNaN(stock)) {
+                alert('Please complete all required fields correctly!');
+                return;
+            }
+            
+            const newProduct = {
+                id: Date.now(),
+                name,
+                category,
+                price,
+                stock,
+                description,
+                dateAdded: new Date().toLocaleString(),
+                image: null
+            };
+            
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    newProduct.image = e.target.result;
+                    products.push(newProduct);
+                    saveProducts();
+                    
+                    // Add to categories if not already there
+                    if (!categories.includes(category)) {
+                        categories.push(category);
+                        saveCategories();
+                        updateCategoriesDropdown();
+                    }
+                    
+                    // Add to logs
+                    addLog(`Added product: ${name} (${category}) - M${price.toFixed(2)}`);
+                    
+                    // Clear inputs
+                    clearProductForm();
+                    
+                    updateAdminView();
+                    updateCustomerView();
+                }
+                reader.readAsDataURL(imageFile);
+            } else {
+                products.push(newProduct);
+                saveProducts();
+                
+                // Add to categories if not already there
+                if (!categories.includes(category)) {
+                    categories.push(category);
+                    saveCategories();
+                    updateCategoriesDropdown();
+                }
+                
+                // Add to logs
+                addLog(`Added product: ${name} (${category}) - M${price.toFixed(2)}`);
+                
+                // Clear inputs
+                clearProductForm();
+                
+                updateAdminView();
+                updateCustomerView();
+            }
+        }
+        
+        // Clear product form
+        function clearProductForm() {
+            productNameInput.value = '';
+            productCategoryInput.value = '';
+            productPriceInput.value = '';
+            productStockInput.value = '';
+            productDescriptionInput.value = '';
+            productImageInput.value = '';
+            imagePreview.src = '#';
+            imagePreview.style.display = 'none';
+        }
+        
+        // Delete a product
+        function deleteProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                products = products.filter(p => p.id !== id);
+                saveProducts();
+                addLog(`Deleted product: ${product.name} (${product.category})`);
+                updateAdminView();
+                updateCustomerView();
+                
+                // Check if category is still used
+                updateCategoriesList();
+            }
+        }
+        
+        // Update stock for a product
+        function updateStock(id, newStock) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                const oldStock = product.stock;
+                product.stock = parseInt(newStock) || 0;
+                saveProducts();
+                addLog(`Updated stock for ${product.name}: ${oldStock} → ${product.stock}`);
+                updateAdminView();
+                updateCustomerView();
+            }
+        }
+        
+        // Update price for a product
+        function updatePrice(id, newPrice) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                const oldPrice = product.price;
+                product.price = parseFloat(newPrice) || 0;
+                saveProducts();
+                addLog(`Updated price for ${product.name}: M${oldPrice.toFixed(2)} → M${product.price.toFixed(2)}`);
+                updateAdminView();
+                updateCustomerView();
+            }
+        }
+        
+        // Add a log entry
+        function addLog(message) {
+            logs.unshift({
+                timestamp: new Date().toLocaleString(),
+                message
+            });
+            saveLogs();
+            updateLogsView();
+        }
+        
+        // Update categories list by checking which are still in use
+        function updateCategoriesList() {
+            const usedCategories = new Set(products.map(p => p.category));
+            categories = Array.from(usedCategories);
+            saveCategories();
+            updateCategoriesDropdown();
+        }
+        
+        // Save products to localStorage
+        function saveProducts() {
+            localStorage.setItem('khomotjo_products', JSON.stringify(products));
+        }
+        
+        // Save categories to localStorage
+        function saveCategories() {
+            localStorage.setItem('khomotjo_categories', JSON.stringify(categories));
+        }
+        
+        // Save logs to localStorage
+        function saveLogs() {
+            localStorage.setItem('khomotjo_logs', JSON.stringify(logs));
+        }
+        
+        // Update the customer view
+        function updateCustomerView() {
+            const selectedCategory = customerCategoryFilter.value;
+            let filteredProducts = [...products];
+            
+            if (selectedCategory !== 'all') {
+                filteredProducts = products.filter(p => p.category === selectedCategory);
+            }
+            
+            customerProductsContainer.innerHTML = '';
+            
+            if (filteredProducts.length === 0) {
+                customerProductsContainer.innerHTML = '<p>No products available in this category.</p>';
+                return;
+            }
+            
+            filteredProducts.forEach(product => {
+                const productElement = document.createElement('div');
+                productElement.className = 'customer-product';
+                
+                // Add bling container
+                const blingContainer = document.createElement('div');
+                blingContainer.className = 'bling-container';
+                createBlingEffect(blingContainer);
+                
+                const productContent = document.createElement('div');
+                productContent.className = 'product-content';
+                
+                const stockClass = product.stock > 0 ? 'stock' : 'out-of-stock';
+                const stockText = product.stock > 0 ? `In Stock: ${product.stock}` : 'Out of Stock';
+                
+                let imageHTML = '';
+                if (product.image) {
+                    imageHTML = `<img src="${product.image}" class="product-image" alt="${product.name}">`;
+                }
+                
+                productContent.innerHTML = `
+                    ${imageHTML}
+                    <h3>${product.name}</h3>
+                    <p><strong>Category:</strong> ${product.category}</p>
+                    ${product.description ? `<p>${product.description}</p>` : ''}
+                    <p class="price">M${product.price.toFixed(2)}</p>
+                    <p class="${stockClass}">${stockText}</p>
+                `;
+                
+                productElement.appendChild(blingContainer);
+                productElement.appendChild(productContent);
+                customerProductsContainer.appendChild(productElement);
+            });
+        }
+        
+        // Update the admin view
+        function updateAdminView() {
+            adminProductList.innerHTML = '';
+            
+            if (products.length === 0) {
+                adminProductList.innerHTML = '<p>No products added yet.</p>';
+                return;
+            }
+            
+            products.forEach(product => {
+                const productElement = document.createElement('div');
+                productElement.className = 'product-item';
+                
+                let imageHTML = '';
+                if (product.image) {
+                    imageHTML = `<img src="${product.image}" class="product-image" alt="${product.name}" style="max-width: 100px; max-height: 100px;">`;
+                }
+                
+                productElement.innerHTML = `
+                    <div class="product-info">
+                        ${imageHTML}
+                        <h3>${product.name}</h3>
+                        <p><strong>Category:</strong> ${product.category}</p>
+                        <p><strong>Price:</strong> M<input type="number" value="${product.price.toFixed(2)}" 
+                            onchange="updatePrice(${product.id}, this.value)" style="width: 80px;"></p>
+                        <p><strong>Stock:</strong> <input type="number" value="${product.stock}" 
+                            onchange="updateStock(${product.id}, this.value)" style="width: 60px;"></p>
+                        ${product.description ? `<p>${product.description}</p>` : ''}
+                        <p><small>Added: ${product.dateAdded}</small></p>
+                    </div>
+                    <div class="product-actions">
+                        <button onclick="deleteProduct(${product.id})">Delete</button>
+                    </div>
+                `;
+                
+                adminProductList.appendChild(productElement);
+            });
+        }
+        
+        // Update the categories dropdown
+        function updateCategoriesDropdown() {
+            customerCategoryFilter.innerHTML = '<option value="all">All Categories</option>';
+            
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                customerCategoryFilter.appendChild(option);
+            });
+        }
+        
+        // Update the logs view
+        function updateLogsView() {
+            adminLogsContainer.innerHTML = '';
+            
+            if (logs.length === 0) {
+                adminLogsContainer.innerHTML = '<p>No activity yet.</p>';
+                return;
+            }
+            
+            logs.slice(0, 20).forEach(log => {
+                const logElement = document.createElement('div');
+                logElement.className = 'log-entry';
+                logElement.innerHTML = `<strong>${log.timestamp}</strong>: ${log.message}`;
+                adminLogsContainer.appendChild(logElement);
+            });
+        }
+        
+        // Initialize the app when the page loads
+        window.onload = init;
+        
+        // Make functions available globally for inline event handlers
+        window.deleteProduct = deleteProduct;
+        window.updateStock = updateStock;
+        window.updatePrice = updatePrice;
+    </script>
+</body>
+</html>
